@@ -1,0 +1,6 @@
+{
+  "name": "建築師事務所出勤績效薪資系統",
+  "description": "專為建築師事務所設計之專案導向、外勤簽到、Timesheet工時歸算、多維度績效考核與勞基法合規薪資結算三位一體整合系統",
+  "requestFramePermissions": ["geolocation", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
