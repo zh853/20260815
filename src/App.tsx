@@ -13,6 +13,9 @@ import { calculateUserHourlyRate } from './utils/calculations';
 import { Header } from './components/common/Header';
 import { UserEditModal } from './components/common/UserEditModal';
 import { ProjectEditModal } from './components/common/ProjectEditModal';
+import { DeviceSwitcher, ViewMode } from './components/common/DeviceSwitcher';
+import { MobilePhoneSimulator } from './components/common/MobilePhoneSimulator';
+import { DesktopCommandBar } from './components/common/DesktopCommandBar';
 import { SystemWorkflowPanel } from './components/workflow/SystemWorkflowPanel';
 import { AttendancePanel } from './components/attendance/AttendancePanel';
 import { TimesheetPanel } from './components/timesheet/TimesheetPanel';
@@ -33,6 +36,10 @@ export default function App() {
 
   // Active Main Navigation Tab
   const [activeTab, setActiveTab] = useState<string>('workflow');
+
+  // Device View Mode ('desktop' | 'mobile' | 'responsive') & Desktop Command Bar
+  const [viewMode, setViewMode] = useState<ViewMode>('desktop');
+  const [isCommandBarOpen, setIsCommandBarOpen] = useState<boolean>(false);
 
   // Edit Modals State
   const [isUserModalOpen, setIsUserModalOpen] = useState<boolean>(false);
@@ -227,9 +234,101 @@ export default function App() {
     setProjects(prev => prev.map(p => p.id === projectId ? { ...p, totalBonusPool: newPool } : p));
   };
 
+  const renderMainContent = () => (
+    <>
+      {activeTab === 'workflow' && (
+        <SystemWorkflowPanel
+          currentUser={currentUser}
+          projects={projects}
+          timesheets={timesheets}
+          onNavigateTab={setActiveTab}
+          onOpenUserEdit={handleOpenUserEdit}
+          onOpenProjectEdit={handleOpenProjectEdit}
+        />
+      )}
+
+      {activeTab === 'attendance' && (
+        <AttendancePanel
+          currentUser={currentUser}
+          projects={projects}
+          attendanceLogs={attendanceLogs}
+          onAddAttendanceLog={handleAddAttendanceLog}
+          leaveRequests={leaveRequests}
+          onAddLeaveRequest={handleAddLeaveRequest}
+          onUpdateUserCompTime={handleUpdateUserCompTime}
+          onOpenProjectEdit={handleOpenProjectEdit}
+          onOpenUserEdit={handleOpenUserEdit}
+        />
+      )}
+
+      {activeTab === 'timesheet' && (
+        <TimesheetPanel
+          currentUser={currentUser}
+          allUsers={allUsers}
+          projects={projects}
+          timesheets={timesheets}
+          onAddTimesheet={handleAddTimesheet}
+          onApproveTimesheet={handleApproveTimesheet}
+          onRejectTimesheet={handleRejectTimesheet}
+          onBatchApprove={handleBatchApprove}
+          onOpenProjectEdit={handleOpenProjectEdit}
+          onOpenUserEdit={handleOpenUserEdit}
+        />
+      )}
+
+      {activeTab === 'performance' && (
+        <PerformanceReviewPanel
+          currentUser={currentUser}
+          allUsers={allUsers}
+          projects={projects}
+          timesheets={timesheets}
+          performanceReviews={performanceReviews}
+          onUpdatePerformanceReview={handleUpdatePerformanceReview}
+          onDistributeProjectBonus={handleDistributeProjectBonus}
+          onOpenProjectEdit={handleOpenProjectEdit}
+          onOpenUserEdit={handleOpenUserEdit}
+        />
+      )}
+
+      {activeTab === 'payroll' && (
+        <PayrollPanel
+          currentUser={currentUser}
+          allUsers={allUsers}
+          projects={projects}
+          timesheets={timesheets}
+          performanceReviews={performanceReviews}
+          monthlyPayrolls={monthlyPayrolls}
+          onUpdatePayroll={handleUpdatePayroll}
+          onOpenUserEdit={handleOpenUserEdit}
+          onOpenProjectEdit={handleOpenProjectEdit}
+        />
+      )}
+
+      {activeTab === 'director' && currentUser.role === 'ROLE_DIRECTOR' && (
+        <DirectorDashboard
+          currentUser={currentUser}
+          allUsers={allUsers}
+          projects={projects}
+          timesheets={timesheets}
+          performanceReviews={performanceReviews}
+          onUpdateProjectBonusPool={handleUpdateProjectBonusPool}
+          onOpenProjectEdit={handleOpenProjectEdit}
+          onOpenUserEdit={handleOpenUserEdit}
+        />
+      )}
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
-      {/* Top Header & Role Switcher */}
+      {/* Top Device Switcher Toolbar */}
+      <DeviceSwitcher
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        onOpenCommandBar={() => setIsCommandBarOpen(true)}
+      />
+
+      {/* Main Top Header & Role Switcher */}
       <Header
         currentUser={currentUser}
         allUsers={allUsers}
@@ -238,91 +337,23 @@ export default function App() {
         setActiveTab={setActiveTab}
         onOpenUserEdit={handleOpenUserEdit}
         onOpenProjectEdit={handleOpenProjectEdit}
+        onOpenCommandBar={() => setIsCommandBarOpen(true)}
       />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-5">
-        {activeTab === 'workflow' && (
-          <SystemWorkflowPanel
-            currentUser={currentUser}
-            projects={projects}
-            timesheets={timesheets}
-            onNavigateTab={setActiveTab}
-            onOpenUserEdit={handleOpenUserEdit}
-            onOpenProjectEdit={handleOpenProjectEdit}
-          />
-        )}
-
-        {activeTab === 'attendance' && (
-          <AttendancePanel
-            currentUser={currentUser}
-            projects={projects}
-            attendanceLogs={attendanceLogs}
-            onAddAttendanceLog={handleAddAttendanceLog}
-            leaveRequests={leaveRequests}
-            onAddLeaveRequest={handleAddLeaveRequest}
-            onUpdateUserCompTime={handleUpdateUserCompTime}
-            onOpenProjectEdit={handleOpenProjectEdit}
-            onOpenUserEdit={handleOpenUserEdit}
-          />
-        )}
-
-        {activeTab === 'timesheet' && (
-          <TimesheetPanel
-            currentUser={currentUser}
-            allUsers={allUsers}
-            projects={projects}
-            timesheets={timesheets}
-            onAddTimesheet={handleAddTimesheet}
-            onApproveTimesheet={handleApproveTimesheet}
-            onRejectTimesheet={handleRejectTimesheet}
-            onBatchApprove={handleBatchApprove}
-            onOpenProjectEdit={handleOpenProjectEdit}
-            onOpenUserEdit={handleOpenUserEdit}
-          />
-        )}
-
-        {activeTab === 'performance' && (
-          <PerformanceReviewPanel
-            currentUser={currentUser}
-            allUsers={allUsers}
-            projects={projects}
-            timesheets={timesheets}
-            performanceReviews={performanceReviews}
-            onUpdatePerformanceReview={handleUpdatePerformanceReview}
-            onDistributeProjectBonus={handleDistributeProjectBonus}
-            onOpenProjectEdit={handleOpenProjectEdit}
-            onOpenUserEdit={handleOpenUserEdit}
-          />
-        )}
-
-        {activeTab === 'payroll' && (
-          <PayrollPanel
-            currentUser={currentUser}
-            allUsers={allUsers}
-            projects={projects}
-            timesheets={timesheets}
-            performanceReviews={performanceReviews}
-            monthlyPayrolls={monthlyPayrolls}
-            onUpdatePayroll={handleUpdatePayroll}
-            onOpenUserEdit={handleOpenUserEdit}
-            onOpenProjectEdit={handleOpenProjectEdit}
-          />
-        )}
-
-        {activeTab === 'director' && currentUser.role === 'ROLE_DIRECTOR' && (
-          <DirectorDashboard
-            currentUser={currentUser}
-            allUsers={allUsers}
-            projects={projects}
-            timesheets={timesheets}
-            performanceReviews={performanceReviews}
-            onUpdateProjectBonusPool={handleUpdateProjectBonusPool}
-            onOpenProjectEdit={handleOpenProjectEdit}
-            onOpenUserEdit={handleOpenUserEdit}
-          />
-        )}
-      </main>
+      {/* Main Content Area: Mobile Simulator vs Desktop Layout */}
+      {viewMode === 'mobile' ? (
+        <MobilePhoneSimulator
+          currentUser={currentUser}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        >
+          {renderMainContent()}
+        </MobilePhoneSimulator>
+      ) : (
+        <main className={`flex-1 w-full mx-auto px-4 sm:px-6 py-5 ${viewMode === 'desktop' ? 'max-w-full font-desktop' : 'max-w-7xl'}`}>
+          {renderMainContent()}
+        </main>
+      )}
 
       {/* Global Personnel Data Edit Modal */}
       <UserEditModal
@@ -343,13 +374,25 @@ export default function App() {
         onSaveProject={handleSaveProject}
       />
 
+      {/* Desktop Quick Command Search Bar (Alt+K) */}
+      <DesktopCommandBar
+        isOpen={isCommandBarOpen}
+        onClose={() => setIsCommandBarOpen(false)}
+        allUsers={allUsers}
+        projects={projects}
+        onSelectUser={handleSelectUser}
+        onNavigateTab={setActiveTab}
+        onOpenUserEdit={handleOpenUserEdit}
+        onOpenProjectEdit={handleOpenProjectEdit}
+      />
+
       {/* High-density System Footer */}
       <footer className="h-8 bg-slate-100 border-t border-slate-200 flex items-center justify-between px-6 text-[10px] text-slate-500 uppercase tracking-widest font-medium shrink-0">
-        <span>ARCHSYSTEMS ERP · 三位一體整合系統</span>
-        <span className="font-mono text-slate-400 hidden sm:inline">勞基法驗證 · GEOFENCING R=200M · TIMESHEET COSTING ENGINE</span>
+        <span>ARCHSYSTEMS ERP · 三位一體整合系統 (桌面/手機雙模式)</span>
+        <span className="font-mono text-slate-400 hidden sm:inline">勞基法驗證 · GEOFENCING R=200M · DESKTOP LAUNCHER READY</span>
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-          <span className="font-mono text-slate-600">SYSTEM READY</span>
+          <span className="font-mono text-slate-600">DESKTOP READY</span>
         </div>
       </footer>
     </div>

@@ -10,6 +10,7 @@ interface HeaderProps {
   setActiveTab: (tab: string) => void;
   onOpenUserEdit: (userId?: string) => void;
   onOpenProjectEdit: (projectId?: string) => void;
+  onOpenCommandBar?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,7 +20,8 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   onOpenUserEdit,
-  onOpenProjectEdit
+  onOpenProjectEdit,
+  onOpenCommandBar
 }) => {
   const getRoleBadge = (role: UserRole) => {
     switch (role) {
