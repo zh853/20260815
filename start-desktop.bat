@@ -2,9 +2,9 @@
 chcp 65001 > nul
 title ArchSystems 事務所整合系統 - 桌面瀏覽器啟動器
 
-echo ========================================================
+echo ========================================================================
 echo   ArchSystems 建築師事務所三位一體整合系統 (桌面模式)
-echo ========================================================
+echo ========================================================================
 echo.
 
 :: 檢查 3000 通訊埠是否已經開啟
@@ -21,12 +21,15 @@ echo [2/2] 正在開啟桌面瀏覽器應用程式模式 (http://localhost:3000)
 start msedge --app=http://localhost:3000 2>nul || start chrome --app=http://localhost:3000 2>nul || start http://localhost:3000
 
 echo.
-echo ========================================================
-echo [成功] 系統已於桌面瀏覽器視窗中啟動！
-echo 網址: http://localhost:3000
+echo ========================================================================
+echo   [成功] 系統已於桌面瀏覽器視窗中啟動！
 echo.
-echo 提示: 使用完畢後按下【任意鍵】，系統將自動關閉背景伺服器。
-echo ========================================================
+echo   【本機網址】: http://localhost:3000
+echo   【區網/VPN網址】:
+powershell -ExecutionPolicy Bypass -Command "Get-NetIPAddress -AddressFamily IPv4 | Where-Object { `$_.IPAddress -notlike '127*' -and `$_.IPAddress -notlike '169.254*' } | ForEach-Object { Write-Host ('                 http://' + `$_.IPAddress + ':3000') }"
+echo.
+echo   ★ 提示：使用完畢後按下【任意鍵】，系統將自動關閉背景伺服器。
+echo ========================================================================
 echo.
 pause
 
