@@ -16,6 +16,7 @@ import { ProjectEditModal } from './components/common/ProjectEditModal';
 import { DeviceSwitcher, ViewMode } from './components/common/DeviceSwitcher';
 import { MobilePhoneSimulator } from './components/common/MobilePhoneSimulator';
 import { DesktopCommandBar } from './components/common/DesktopCommandBar';
+import { ServerStatusModal } from './components/common/ServerStatusModal';
 import { SystemWorkflowPanel } from './components/workflow/SystemWorkflowPanel';
 import { AttendancePanel } from './components/attendance/AttendancePanel';
 import { TimesheetPanel } from './components/timesheet/TimesheetPanel';
@@ -40,6 +41,7 @@ export default function App() {
   // Device View Mode ('desktop' | 'mobile' | 'responsive') & Desktop Command Bar
   const [viewMode, setViewMode] = useState<ViewMode>('desktop');
   const [isCommandBarOpen, setIsCommandBarOpen] = useState<boolean>(false);
+  const [isServerStatusOpen, setIsServerStatusOpen] = useState<boolean>(false);
 
   // Edit Modals State
   const [isUserModalOpen, setIsUserModalOpen] = useState<boolean>(false);
@@ -338,6 +340,7 @@ export default function App() {
         onOpenUserEdit={handleOpenUserEdit}
         onOpenProjectEdit={handleOpenProjectEdit}
         onOpenCommandBar={() => setIsCommandBarOpen(true)}
+        onOpenServerStatus={() => setIsServerStatusOpen(true)}
       />
 
       {/* Main Content Area: Mobile Simulator vs Desktop Layout */}
@@ -384,6 +387,12 @@ export default function App() {
         onNavigateTab={setActiveTab}
         onOpenUserEdit={handleOpenUserEdit}
         onOpenProjectEdit={handleOpenProjectEdit}
+      />
+
+      {/* Server Status & Incoming IP Monitor Modal */}
+      <ServerStatusModal
+        isOpen={isServerStatusOpen}
+        onClose={() => setIsServerStatusOpen(false)}
       />
 
       {/* High-density System Footer */}

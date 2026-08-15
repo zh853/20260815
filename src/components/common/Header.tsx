@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, UserRole } from '../../types';
-import { Building2, Shield, UserCheck, Calculator, Briefcase, Sparkles, Clock, Users, FolderKanban, Edit3 } from 'lucide-react';
+import { Building2, Shield, UserCheck, Calculator, Briefcase, Sparkles, Clock, Users, FolderKanban, Edit3, Server } from 'lucide-react';
 
 interface HeaderProps {
   currentUser: User;
@@ -11,6 +11,7 @@ interface HeaderProps {
   onOpenUserEdit: (userId?: string) => void;
   onOpenProjectEdit: (projectId?: string) => void;
   onOpenCommandBar?: () => void;
+  onOpenServerStatus?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -21,7 +22,8 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   onOpenUserEdit,
   onOpenProjectEdit,
-  onOpenCommandBar
+  onOpenCommandBar,
+  onOpenServerStatus
 }) => {
   const getRoleBadge = (role: UserRole) => {
     switch (role) {
@@ -92,6 +94,20 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="hidden sm:inline">專案案件編輯</span>
                 <span className="sm:hidden">案件</span>
               </button>
+
+              {onOpenServerStatus && (
+                <button
+                  type="button"
+                  id="btn-header-server-status"
+                  onClick={onOpenServerStatus}
+                  className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-sky-300 hover:text-white rounded border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                  title="即時監控伺服器運作狀態、通訊埠與連入用戶端 IP"
+                >
+                  <Server className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
+                  <span className="hidden sm:inline">伺服器狀態</span>
+                  <span className="sm:hidden">伺服器</span>
+                </button>
+              )}
             </div>
 
             {/* Current user info & selector */}
